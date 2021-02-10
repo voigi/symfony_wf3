@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{# notre liste d'auteur s'appel auteurList #}
+{% block body %}
+{% for auteur in auteurList %}
+<table class="table">
+<thead>
+<th scope="col">id</th>
+<th scope="col">Nom</th>
+<th scope="col">Prenom</th>
+</thead>
+<tbody>
+     <tr>
+      <td><a href={{path('detail_auteur', {id:auteur.id})}}>{{auteur.id}}</a></td>
+      <td>{{auteur.nom}}</td>
+      <td>{{auteur.prenom}}</td>
+    </tr>
+    <tr>
+      <td><a href={{path('detail_auteur', {id:auteur.id})}}>{{auteur.id}}</a></td>
+      <td>{{auteur.nom}}</td>
+      <td>{{auteur.prenom}}</td>
+    </tr>
+</tbody>
+</table>
+
+
+
+{% endfor %}
+    <a href ={{path('create_auteurs') }} class="btn btn-primary">Creer un nouvel utilisateur</a>
+{% endblock %}

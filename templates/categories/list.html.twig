@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{# notre liste d'auteur s'appel auteurList #}
+{% block body %}
+{% for category in categoriesList %}
+<table class="table">
+<thead>
+<th scope="col">id</th>
+<th scope="col">Nom</th>
+
+</thead>
+<tbody>
+     <tr>
+      <td><a href={{path('detail_categories', {id:category.id})}}>{{category.id}}</a></td>
+      <td>{{category.nom}}</td>
+     
+    </tr>
+    <tr>
+      <td><a href={{path('detail_categories', {id:category.id})}}>{{category.id}}</a></td>
+      <td>{{category.nom}}</td>
+    
+    </tr>
+</tbody>
+</table>
+
+
+
+{% endfor %}
+    <a href ={{path('create_category') }} class="btn btn-primary">Creer une nouvelle categorie</a>
+{% endblock %}

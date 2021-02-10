@@ -3,4 +3,5 @@
     <p>Auteur:{{auteur.id}}</p>
     <p>Nom:{{auteur.nom}}</p>
     <p>Prenom:{{auteur.prenom}}</p>
+    <a href = {{path('update_auteur', {id:auteur.id})}} class="btn btn-warning">Modifier l'utilisateur</a>
 {% endblock %}

@@ -1,0 +1,6 @@
+{% extends 'base.html.twig'%}
+{% block body %}
+    <p>Categorie: {{category.id}}</p>
+    <p>Nom: {{category.nom}}</p>
+    <a href = {{path('update_categories', {id:category.id})}} class="btn btn-warning">Modifier la categorie</a>
+{% endblock %}

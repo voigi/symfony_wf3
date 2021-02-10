@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Articles;
 use App\Entity\Auteurs;
+use App\Form\AuteurType;
 use App\Repository\AuteursRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,5 +57,35 @@ class AuteursController extends AbstractController
 		$auteur = $this->auteurRepository->find($id);
 
 		return $this->render('auteurs\detail.html.twig', ['auteur' => $auteur]);
+	}
+
+	/**
+	*@Route("/auteur/{id}/update", name="update_auteur")
+	*/
+	public function update(Request $request, int $id)
+	{
+		$auteur = $this->auteurRepository->find($id);
+
+		$form = $this->createForm(AuteurType::class, $auteur);
+
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid()) {
+			$this->entityManager->persist($auteur);
+			$this->entityManager->flush();
+
+			return $this->redirectToRoute('detail_auteur', ['id' => $auteur->getId()]);
+		}
+
+		return $this->render('auteurs/update.html.twig', ['formulaire' => $form->CreateView()]);
+	}
+
+	/**
+	*@Route("/auteur", name="list_auteur")
+	*/
+	public function list(Request $request)
+	{
+		$auteurList = $this->auteurRepository->findAll();
+
+		return $this->render('auteurs/list.html.twig', ['auteurList' => $auteurList]);
 	}
 }
