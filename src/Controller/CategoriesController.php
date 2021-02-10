@@ -53,6 +53,18 @@ class CategoriesController extends AbstractController
 	}
 
 	/**
+	 * @Route ("category/{id}/delete", name = "delete_categories")
+	 */
+	public function delete(Request $request, int $id)
+	{
+		$category = $this->categoryRepository->find($id);
+		$this->entityManager->remove($category);
+		$this->entityManager->flush();
+
+		return $this->redirectToRoute('list_categories');
+	}
+
+	/**
 	*@Route("/category/{id}/update", name="update_categories")
 	*/
 	public function update(Request $request, int $id)
