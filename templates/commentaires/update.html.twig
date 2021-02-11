@@ -1,0 +1,9 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    {{form_start(formulaire)}}
+    {{form_row (formulaire.nom)}}
+    {{form_row (formulaire.comment)}}
+    <input type="submit">
+    {{form_end(formulaire)}}
+{% endblock %}

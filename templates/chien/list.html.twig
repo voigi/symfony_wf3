@@ -1,0 +1,9 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <ul>
+    {% for chien in chienList %}
+    <li> {{chien.nom}} - {{chien.age}}</li>
+    </ul>
+    {% endfor %}
+{% endblock %}

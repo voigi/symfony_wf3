@@ -1,0 +1,9 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+  <p>Nom : {{commentaire.nom}} </p>
+  <p>Commentaire: {{commentaire.comment}}</p>
+  {{form_start(deleteForm)}}
+  <input type="submit" value="Supprimer un commentaire">
+  {{form_end(deleteForm)}}
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <ul>
+    {% for commentaire in commentaireList %}
+    <li> {{commentaire.nom}} - {{commentaire.comment}}</li>
+    </ul>
+    {% endfor %}
+{% endblock %}

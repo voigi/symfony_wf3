@@ -1,0 +1,13 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+  <p>Nom : {{chien.nom}} </p>
+  <p>Age : {{chien.age}} ans </p>
+  {{form_start(deleteForm)}}
+  <input type="submit" value="Supprimer un chien">
+  {{form_end(deleteForm)}}
+{% endblock %}
+
+
+{# nom 255 varchar string
+commantaire text ->textarea #}
