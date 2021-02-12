@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Articles;
 use App\Entity\Auteurs;
 use App\Form\AuteurType;
+use App\Form\DeleteForm;
 use App\Repository\AuteursRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,8 +56,16 @@ class AuteursController extends AbstractController
 	public function getDetails(Request $request, int $id)
 	{
 		$auteur = $this->auteurRepository->find($id);
+		$deleteForm = $this->createForm(DeleteForm::class);
+		$deleteForm->handleRequest($request);
+		if ($deleteForm->isSubmitted() && $deleteForm->isValid()) {
+			$this->entityManager->remove($auteur);
+			$this->entityManager->flush();
 
-		return $this->render('auteurs\detail.html.twig', ['auteur' => $auteur]);
+			return $this->redirectToRoute('list_auteur');
+		}
+
+		return $this->render('auteurs\detail.html.twig', ['auteur' => $auteur, 'deleteForm' => $deleteForm->createView()]);
 	}
 
 	/**

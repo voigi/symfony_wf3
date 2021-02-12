@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Articles;
+use App\Entity\Auteurs;
+use App\Entity\Commentaires;
 use App\Form\ArticleType;
+use App\Form\CommentaireType;
 use App\Repository\ArticlesRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,15 +23,16 @@ class ArticlesController extends AbstractController
 	public function __construct(EntityManagerInterface $entityManager, ArticlesRepository $articleRepository)
 	{
 		$this->entityManager = $entityManager;
-		$this->categoryRepository = $articleRepository;
+		$this->ArticlesRepository = $articleRepository;
 	}
 
 	/**
-	 * @Route ("category/create", name = "create_category")
+	 * @Route ("article/create", name = "create_article")
 	 */
 	public function create(Request $request)
 	{
 		$article = new Articles;
+
 		$form = $this->createForm(ArticleType::class, $article);
 
 		$form->handleRequest($request);
@@ -36,35 +40,44 @@ class ArticlesController extends AbstractController
 			$this->entityManager->persist($article);
 			$this->entityManager->flush();
 
-			return $this->redirectToRoute('article_categories', ['id' => $article->getId()]);
+			//return $this->redirectToRoute('article_categories', ['id' => $article->getId()]);
+			return new Response('Article enregistré');
 		}
 
 		return $this->render('articles/create.html.twig', ['form' => $form->createView()]);
 	}
 
 	/**
-	 * @Route ("category/{id}", name = "detail_categories")
+	 * @Route("/article", name="article_list")
+	 */
+	public function articleList(Request $request)
+	{
+		$articleList = $this->ArticlesRepository->findAll();
+
+		return $this->render('articles/list.html.twig', ['articleList' => $articleList]);
+	}
+
+	/**
+	 * @Route ("article/{id}", name = "article_categories")
 	 */
 	public function getDetails(Request $request, int $id)
 	{
-		$article = $this->categoryRepository->find($id);
+		$article = $this->ArticlesRepository->find($id);
 
-		return $this->render('articles\detail.html.twig', ['article' => $article]);
+		$commentaire = new Commentaires;
+		$commentaire->setArticles($article);
+		$form = $this->createForm(CommentaireType::class, $commentaire);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+			$this->entityManager->persist($commentaire);
+			$this->entityManager->flush();
+		}
+
+		return $this->render('articles\detail.html.twig', ['article' => $article, 'formulaire' => $form->createView()]);
 	}
 
 	// 	/**
-// 	 * @Route ("category/{id}/delete", name = "delete_categories")
-// 	 */
-// 	public function delete(Request $request, int $id)
-// 	{
-// 		$category = $this->categoryRepository->find($id);
-// 		$this->entityManager->remove($category);
-// 		$this->entityManager->flush();
-
-// 		return $this->redirectToRoute('list_categories');
-// 	}
-
-// 	/**
 // 	*@Route("/category/{id}/update", name="update_categories")
 // 	*/
 // 	public function update(Request $request, int $id)

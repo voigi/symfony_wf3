@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ArticlesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -10,99 +12,187 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Articles
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+	/**
+	 * @ORM\Id
+	 * @ORM\GeneratedValue
+	 * @ORM\Column(type="integer")
+	 */
+	private $id;
+
+	/**
+	 * @ORM\Column(type="string", length=255)
+	 */
+	private $titre;
+
+	/**
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 */
+	private $soustitre;
+
+	/**
+	 * @ORM\Column(type="text")
+	 */
+	private $contenu;
+
+	/**
+	 * @ORM\Column(type="boolean")
+	 */
+	private $publie;
+
+	/**
+	 * @ORM\Column(type="datetime")
+	 */
+	private $dateDePublication;
+
+	/**
+	 * @ORM\ManyToOne(targetEntity=Auteurs::class, inversedBy="articles",fetch="EAGER")
+	 * @ORM\JoinColumn(onDelete="SET NULL")
+	 */
+	private $auteur;
+
+	/**
+	 * @ORM\ManyToMany(targetEntity=Categories::class, inversedBy="articles")
+	 */
+	private $categories;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToMany(targetEntity=Commentaires::class, mappedBy="articles")
      */
-    private $titre;
+    private $commentaires;
+
+	public function __construct()
+            	{
+            		$this->categories = new ArrayCollection();
+            		$this->commentaires = new ArrayCollection();
+            	}
+
+	public function getId(): ?int
+            	{
+            		return $this->id;
+            	}
+
+	public function getTitre(): ?string
+            	{
+            		return $this->titre;
+            	}
+
+	public function setTitre(string $titre): self
+            	{
+            		$this->titre = $titre;
+            
+            		return $this;
+            	}
+
+	public function getSoustitre(): ?string
+            	{
+            		return $this->soustitre;
+            	}
+
+	public function setSoustitre(?string $soustitre): self
+            	{
+            		$this->soustitre = $soustitre;
+            
+            		return $this;
+            	}
+
+	public function getContenu(): ?string
+            	{
+            		return $this->contenu;
+            	}
+
+	public function setContenu(string $contenu): self
+            	{
+            		$this->contenu = $contenu;
+            
+            		return $this;
+            	}
+
+	public function getPublie(): ?bool
+            	{
+            		return $this->publie;
+            	}
+
+	public function setPublie(bool $publie): self
+            	{
+            		$this->publie = $publie;
+            
+            		return $this;
+            	}
+
+	public function getDateDePublication(): ?\DateTimeInterface
+            	{
+            		return $this->dateDePublication;
+            	}
+
+	public function setDateDePublication(\DateTimeInterface $dateDePublication): self
+            	{
+            		$this->dateDePublication = $dateDePublication;
+            
+            		return $this;
+            	}
+
+	public function getAuteur(): ?Auteurs
+            	{
+            		return $this->auteur;
+            	}
+
+	public function setAuteur(?Auteurs $auteur): self
+            	{
+            		$this->auteur = $auteur;
+            
+            		return $this;
+            	}
+
+	/**
+	 * @return Collection|Categories[]
+	 */
+	public function getCategories(): Collection
+            	{
+            		return $this->categories;
+            	}
+
+	public function addCategory(Categories $category): self
+            	{
+            		if (!$this->categories->contains($category)) {
+            			$this->categories[] = $category;
+            		}
+            
+            		return $this;
+            	}
+
+	public function removeCategory(Categories $category): self
+            	{
+            		$this->categories->removeElement($category);
+            
+            		return $this;
+            	}
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @return Collection|Commentaires[]
      */
-    private $soustitre;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $contenu;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $publié;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $dateDePublication;
-
-    public function getId(): ?int
+    public function getCommentaires(): Collection
     {
-        return $this->id;
+        return $this->commentaires;
     }
 
-    public function getTitre(): ?string
+    public function addCommentaire(Commentaires $commentaire): self
     {
-        return $this->titre;
-    }
-
-    public function setTitre(string $titre): self
-    {
-        $this->titre = $titre;
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->setArticles($this);
+        }
 
         return $this;
     }
 
-    public function getSoustitre(): ?string
+    public function removeCommentaire(Commentaires $commentaire): self
     {
-        return $this->soustitre;
-    }
-
-    public function setSoustitre(?string $soustitre): self
-    {
-        $this->soustitre = $soustitre;
-
-        return $this;
-    }
-
-    public function getContenu(): ?string
-    {
-        return $this->contenu;
-    }
-
-    public function setContenu(string $contenu): self
-    {
-        $this->contenu = $contenu;
-
-        return $this;
-    }
-
-    public function getPublié(): ?bool
-    {
-        return $this->publié;
-    }
-
-    public function setPublié(bool $publié): self
-    {
-        $this->publié = $publié;
-
-        return $this;
-    }
-
-    public function getDateDePublication(): ?\DateTimeInterface
-    {
-        return $this->dateDePublication;
-    }
-
-    public function setDateDePublication(\DateTimeInterface $dateDePublication): self
-    {
-        $this->dateDePublication = $dateDePublication;
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getArticles() === $this) {
+                $commentaire->setArticles(null);
+            }
+        }
 
         return $this;
     }

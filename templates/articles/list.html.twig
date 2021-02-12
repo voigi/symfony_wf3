@@ -1,0 +1,27 @@
+  
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <table class="table table-bordered">
+        <thead>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Sous-titre</th>
+            <th>Auteur</th>
+        </thead>
+        <tbody>
+            {% for article in articleList %}
+                <tr>
+                    <td>{{ article.id }}</td>
+                    <td>{{ article.titre }}</td>
+                    <td>{{ article.sousTitre }}</td>
+                    {% if article.auteur is not null %}
+                        <td>{{ article.auteur.prenom }} {{ article.auteur.nom }}</td>
+                    {% else %}
+                        <td>Auteur inconnu</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

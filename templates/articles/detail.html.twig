@@ -1,6 +1,15 @@
 {% extends 'base.html.twig'%}
 {% block body %}
-    <p>Categorie: {{category.id}}</p>
-    <p>Nom: {{category.nom}}</p>
-    <a href = {{path('update_categories', {id:category.id})}} class="btn btn-warning">Modifier la categorie</a>
+
+    <p>Titre: {{article.titre}}</p>
+    <p>sousTitre: {{article.sousTitre}}</p>
+    <p>contenu: {{article.contenu}}</p>
+
+   {{form_start(formulaire)}}
+    {{form_row (formulaire.nom)}}
+    {{form_row (formulaire.comment)}}
+    <input type="submit">
+    {{form_end(formulaire)}}
+
+    <a href = {{path('update_categories', {id:article.id})}} class="btn btn-warning">Modifier un article</a>
 {% endblock %}

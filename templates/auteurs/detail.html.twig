@@ -1,7 +1,17 @@
-{% extends 'base.html.twig'%}
+{% extends 'base.html.twig' %}
+
+{% block title %} {{auteur.prenom}} {{auteur.nom}} {% endblock %}
+
+{% block header_title %} {{auteur.prenom}} {{auteur.nom}}{% endblock %}
+
+{%  block header_subtitle %} #{{ auteur.id }} {% endblock %}
+
 {% block body %}
-    <p>Auteur:{{auteur.id}}</p>
-    <p>Nom:{{auteur.nom}}</p>
-    <p>Prenom:{{auteur.prenom}}</p>
-    <a href = {{path('update_auteur', {id:auteur.id})}} class="btn btn-warning">Modifier l'utilisateur</a>
+  <p>Nom : {{ auteur.nom  }} </p>
+  <p>Prénom : {{auteur.prenom}}</p>
+  <a class="btn btn-block btn-dark" href={{ path('update_auteur', {id:auteur.id}) }}>Modifier l'auteur</a>
+
+  {{ form_start(deleteForm) }}
+    <input type="submit" class="btn btn-block btn-danger" value="Supprimer l'auteur">
+  {{ form_end(deleteForm) }}
 {% endblock %}
