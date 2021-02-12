@@ -1,0 +1,120 @@
+   ---------------------------------Entity---------------------------------------------
+1 creer une entité .
+2 Migrer les données.
+3 Mise en place des contraintes sur l'entité @Asserts..dans les Annotations -> use Symfony\Component\Validator\Constraints as Assert;
+-------------------------------------Form---------------------------------------------
+4  Formulaire ds le dossier Form  , creer  un fichier ***Type.php  utiliser le form builderinterface  ->  
+les uses :
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\FormBuilderInterface;
+-------------------------------------Controller---------------------------------------------
+5 Mise en place du controller
+
+-fonction create (exemple pour une classe chien)
+
+-------------------------------------------------------------------------------------
+class ChienController extends AbstractController
+{
+	/**
+	 * @Route("/chien/create", name="chien_create")
+	 */
+	public function create(Request $request)
+	{
+		$chien = new Chien();
+		$form = $this->createForm(ChienType::class, $chien);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+		}
+
+		return $this->render('chien/create.html.twig', ['formulaire' => $form->createView()]);
+	}
+	---------------------fonction detail--avec mise en place d'une exception-------------
+	/**
+	 * @Route("/chien/{id}", name="chien_details",requirements={"id=\d+"})
+	 */
+	public function getDetails(Request $request, int $id)
+	{
+		$chien = $this->chienRepository->find($id);
+		if ($chien === null) {
+			throw new  NotFoundHttpException('chien introuvable');
+		}
+		 return $this->render('chien/details.html.twig', ['chien' => $chien]); ---> direction twig
+	}
+	/**
+	 * @Route("/chien/{id}/update", name="chien_update",requirements={"id"="\d+"})
+	 */
+	 ------------------------------fonction update de chien Controller-------------------
+	public function update(Request $request, int $id)
+	{
+		$chien = $this->chienRepository->find($id);
+		if ($chien === null) {
+			throw new  NotFoundHttpException('chien introuvable');
+		}
+		$form = $this->createForm(ChienType::class, $chien);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+			$this->entityManager->persist($chien);
+			$this->entityManager->flush();
+
+			return $this->redirectToRoute('chien_details', ['id' => $chien->getId()]); ---> redirection
+		}
+
+		return $this->render('chien/update.html.twig', ['formulaire' => $form->createView()]); ---> direction twig
+	}
+--------------------------------------------------------------------------------------------------
+	 integrons le tout en bdd et retournons une reponse
+	 
+	 	if ($form->isSubmitted() && $form->isValid()) {
+			$this->entityManager->persist($chien);
+			$this->entityManager->flush();
+
+			return new Response('chien enregistré');
+		}
+---------------------------------------fonction---list---------------------------------------------------------		
+}
+	/**
+	 * @Route("/chien/", name="chien_list")
+	 */
+	public function getList(Request $request)
+	{
+		$chienList = $this->chienRepository->findAll();
+
+		return $this->render('chien/list.html.twig', ['chienList' => $chienList]);
+	}
+------------------------------------fonction delete----------------------------------------------------------------------
+	/**
+	 * @Route("/chien/{id}/delete", name="chien_delete",requirements={"id"="\d+"})
+	 */
+	public function delete(Request $request, int $id)
+	{
+		$chien = $this->chienRepository->find($id);
+		if ($chien === null) {
+			throw new  NotFoundHttpException('chien introuvable');
+		}
+
+		$this->entityManager->remove($chien);
+		$this->entityManager->flush();
+
+		return $this->redirectToRoute('chien_list');
+	}
+
+ et mise en place de la vue du formulaire 
+use à utiliser 
+
+dans le controller :
+namespace App\Controller; !!!!!!! ne pas oublier le namespace
+
+use App\Entity\nom de l'entité;
+use App\Form\***Type;---> au fichier ds Form
+use App\Form\DeleteForm; se situe ds Form
+use App\Repository\***Repository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
