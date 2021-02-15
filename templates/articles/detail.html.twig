@@ -1,15 +1,41 @@
-{% extends 'base.html.twig'%}
+{% extends 'base.html.twig' %}
+
 {% block body %}
+    <h1>{{ article.titre }}</h1>
+    <h2>{{ article.sousTitre }}</h2>
+    <p>{{ article.contenu }}</p>
+    <p>By {{ article.user.prenom }} {{ article.user.nom }}</p>
 
-    <p>Titre: {{article.titre}}</p>
-    <p>sousTitre: {{article.sousTitre}}</p>
-    <p>contenu: {{article.contenu}}</p>
+    <p>publié le : {{ article.dateDePublication|date('d/m/Y') }} à {{ article.dateDePublication|date('H:i') }}</p>
+    <br>
+    <h5>Categories</h5>
+    <ul>
+        {% for cat in article.categories %}
+            <li>{{ cat.nom }}</li>
+        {% endfor %}
+    </ul>
 
-   {{form_start(formulaire)}}
-    {{form_row (formulaire.nom)}}
-    {{form_row (formulaire.comment)}}
-    <input type="submit">
-    {{form_end(formulaire)}}
+    <div class="card mb-5">
+        <div class="card-header">Donnez nous notre avis !</div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.comment) }}
+            <input type="submit" class="btn-dark btn btn-block" value="Envoyer votre commentaire">
+            {{ form_end(form) }}
+        </div>
+    </div>
 
-    <a href = {{path('update_categories', {id:article.id})}} class="btn btn-warning">Modifier un article</a>
+    <div class="card">
+            {% for comment in article.commentaires %}
+                <div class="card">
+                    <div class="card-header">
+                         {{ comment.nom }}
+                    </div>
+                    <div class="card-body">
+                        {{ comment.commentaire }}
+                    </div>
+                </div>
+            {% endfor %}
+    </div>
 {% endblock %}

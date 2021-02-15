@@ -29,76 +29,76 @@ class Auteurs
 
 	/**
 	 * @ORM\Column(type="string", length=255, nullable=true)
-	 * @Assert\Length(min=2,max=255,minMessage="le nom doit faire minimum 2 caracteres",maxMessage="le nom doit faire maximum 255 caracteres")
+	 * @Assert\Length(min=2,max=255,minMessage="le prenom doit faire minimum 2 caracteres",maxMessage="le nom doit faire maximum 255 caracteres")
 	 */
 	private $prenom;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Articles::class, mappedBy="auteur")
-     */
-    private $articles;
+	/**
+	 * @ORM\OneToMany(targetEntity=Articles::class, mappedBy="auteur")
+	 */
+	private $articles;
 
-    public function __construct()
-    {
-        $this->articles = new ArrayCollection();
-    }
+	public function __construct()
+	{
+		$this->articles = new ArrayCollection();
+	}
 
 	public function getId(): ?int
-                        	{
-                        		return $this->id;
-                        	}
+	{
+		return $this->id;
+	}
 
 	public function getNom(): ?string
-                        	{
-                        		return $this->nom;
-                        	}
+	{
+		return $this->nom;
+	}
 
 	public function setNom(string $nom): self
-                        	{
-                        		$this->nom = $nom;
-                        
-                        		return $this;
-                        	}
+	{
+		$this->nom = $nom;
+
+		return $this;
+	}
 
 	public function getPrenom(): ?string
-                        	{
-                        		return $this->prenom;
-                        	}
+	{
+		return $this->prenom;
+	}
 
 	public function setPrenom(?string $prenom): self
-                        	{
-                        		$this->prenom = $prenom;
-                        
-                        		return $this;
-                        	}
+	{
+		$this->prenom = $prenom;
 
-    /**
-     * @return Collection|Articles[]
-     */
-    public function getArticles(): Collection
-    {
-        return $this->articles;
-    }
+		return $this;
+	}
 
-    public function addArticle(Articles $article): self
-    {
-        if (!$this->articles->contains($article)) {
-            $this->articles[] = $article;
-            $article->setAuteur($this);
-        }
+	/**
+	 * @return Collection|Articles[]
+	 */
+	public function getArticles(): Collection
+	{
+		return $this->articles;
+	}
 
-        return $this;
-    }
+	public function addArticle(Articles $article): self
+	{
+		if (!$this->articles->contains($article)) {
+			$this->articles[] = $article;
+			$article->setAuteur($this);
+		}
 
-    public function removeArticle(Articles $article): self
-    {
-        if ($this->articles->removeElement($article)) {
-            // set the owning side to null (unless already changed)
-            if ($article->getAuteur() === $this) {
-                $article->setAuteur(null);
-            }
-        }
+		return $this;
+	}
 
-        return $this;
-    }
+	public function removeArticle(Articles $article): self
+	{
+		if ($this->articles->removeElement($article)) {
+			// set the owning side to null (unless already changed)
+			if ($article->getAuteur() === $this) {
+				$article->setAuteur(null);
+			}
+		}
+
+		return $this;
+	}
 }

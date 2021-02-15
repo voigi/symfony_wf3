@@ -24,4 +24,7 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if is _granted('ROLE_AUTEUR') %}
+        <a class='btn btn-block btn-dark'   
+    {% endif %}
 {% endblock %}

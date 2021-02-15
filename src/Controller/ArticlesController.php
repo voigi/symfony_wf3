@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Articles;
 use App\Entity\Auteurs;
+use App\Services\FakeArticleService;
 use App\Entity\Commentaires;
 use App\Form\ArticleType;
 use App\Form\CommentaireType;
@@ -13,26 +14,33 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class ArticlesController extends AbstractController
 {
 	private $entityManager;
 
+	private $fakeArticleService;
+
 	private $articleRepository;
 
-	public function __construct(EntityManagerInterface $entityManager, ArticlesRepository $articleRepository)
+	public function __construct(EntityManagerInterface $entityManager, ArticlesRepository $articleRepository, FakeArticleService $fakeArticleService)
 	{
 		$this->entityManager = $entityManager;
-		$this->ArticlesRepository = $articleRepository;
+		$this->articlesRepository = $articleRepository;
+		$this->fakeArticleService = $fakeArticleService;
 	}
 
 	/**
 	 * @Route ("article/create", name = "create_article")
+	 * @isGranted("ROLE_AUTEUR")
 	 */
 	public function create(Request $request)
 	{
+		$user = $this->getUser();
 		$article = new Articles;
 
+		$article->setUser($user);
 		$form = $this->createForm(ArticleType::class, $article);
 
 		$form->handleRequest($request);
@@ -58,7 +66,7 @@ class ArticlesController extends AbstractController
 	}
 
 	/**
-	 * @Route ("article/{id}", name = "article_categories")
+	 * @Route ("article/{id}", name = "article_categories",requirements={"id"="\d+"})
 	 */
 	public function getDetails(Request $request, int $id)
 	{
@@ -74,7 +82,29 @@ class ArticlesController extends AbstractController
 			$this->entityManager->flush();
 		}
 
-		return $this->render('articles\detail.html.twig', ['article' => $article, 'formulaire' => $form->createView()]);
+		return $this->render('articles\detail.html.twig', ['article' => $article, 'form' => $form->createView()]);
+	}
+
+	/**
+	 * @Route ("article/fake", name = "article_fake")
+	 * @IsGranted("ROLE_AUTEUR")
+	 *
+	 */
+	public function createFakeArticle(Request $request)
+	{
+		$article = $this->fakeArticleService->getFakeArticle();
+		$user = $this->getUser();
+		$article->setUser($user);
+
+		$form = $this->createForm(ArticleType::class, $article);
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+			$this->entityManager->persist($article);
+			$this->entityManager->flush();
+		}
+
+		return $this->render('articles\create.html.twig', ['form' => $form->createView()]);
 	}
 
 	// 	/**
